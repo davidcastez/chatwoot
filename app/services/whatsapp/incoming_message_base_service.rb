@@ -178,6 +178,25 @@ class Whatsapp::IncomingMessageBaseService
     content_attrs = outgoing_echo ? { external_echo: true } : {}
     content_attrs[:in_reply_to_external_id] = @in_reply_to_external_id if @in_reply_to_external_id.present?
 
+    # QualiChat: Extract WhatsApp referral data for Meta Ads attribution (ctwa_clid, ig_sid, etc.)
+    # The referral object is present in the first message when a user clicks a Click-to-WhatsApp ad.
+    # See: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/components#messages-object
+    referral_data = messages_data.first&.dig(:referral)
+    if referral_data.present?
+      content_attrs[:whatsapp] ||= {}
+      content_attrs[:whatsapp][:referral] = {
+        ctwa_clid: referral_data[:ctwa_clid],
+        source_url: referral_data[:source_url],
+        source_type: referral_data[:source_type],
+        source_id: referral_data[:source_id],
+        headline: referral_data[:headline],
+        body: referral_data[:body]
+      }.compact
+
+      # Also store referral data as a custom attribute on the conversation for easy access
+      store_referral_on_conversation(referral_data) if @conversation.present?
+    end
+
     @message = @conversation.messages.build(
       content: message_content(message),
       account_id: @inbox.account_id,
@@ -189,6 +208,18 @@ class Whatsapp::IncomingMessageBaseService
       source_id: (source_id || message[:id]).to_s,
       content_attributes: content_attrs
     )
+  end
+
+  def store_referral_on_conversation(referral_data)
+    custom_attrs = @conversation.custom_attributes || {}
+    custom_attrs['ctwa_clid'] = referral_data[:ctwa_clid] if referral_data[:ctwa_clid].present?
+    custom_attrs['referral_source_url'] = referral_data[:source_url] if referral_data[:source_url].present?
+    custom_attrs['referral_source_type'] = referral_data[:source_type] if referral_data[:source_type].present?
+    custom_attrs['referral_headline'] = referral_data[:headline] if referral_data[:headline].present?
+    custom_attrs['referral_body'] = referral_data[:body] if referral_data[:body].present?
+    @conversation.update!(custom_attributes: custom_attrs) if custom_attrs != (@conversation.custom_attributes || {})
+  rescue StandardError => e
+    Rails.logger.error "QualiChat: Failed to store referral data on conversation: #{e.message}"
   end
 
   def attach_contact(contact)
