@@ -10,18 +10,18 @@ import semver from 'semver';
 const { t } = useI18n();
 const { currentAccount } = useAccount();
 
-const latestChatwootVersion = computed(() => {
+const latestQualiChatVersion = computed(() => {
   return currentAccount.value.latest_chatwoot_version;
 });
 
 const globalConfig = useMapGetter('globalConfig/get');
 
 const hasAnUpdateAvailable = computed(() => {
-  if (!semver.valid(latestChatwootVersion.value)) {
+  if (!semver.valid(latestQualiChatVersion.value)) {
     return false;
   }
 
-  return semver.lt(globalConfig.value.appVersion, latestChatwootVersion.value);
+  return semver.lt(globalConfig.value.appVersion, latestQualiChatVersion.value);
 });
 
 const gitSha = computed(() => {
@@ -38,7 +38,7 @@ const copyGitSha = () => {
     <div v-if="hasAnUpdateAvailable && globalConfig.displayManifest">
       {{
         t('GENERAL_SETTINGS.UPDATE_CHATWOOT', {
-          latestChatwootVersion: latestChatwootVersion,
+          latestQualiChatVersion: latestQualiChatVersion,
         })
       }}
     </div>

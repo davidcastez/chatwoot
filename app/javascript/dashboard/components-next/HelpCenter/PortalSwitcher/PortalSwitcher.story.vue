@@ -4,14 +4,14 @@ import PortalSwitcher from './PortalSwitcher.vue';
 const portals = [
   {
     id: 1,
-    name: 'Chatwoot Help Center',
+    name: 'QualiChat Help Center',
     articles: 67,
     domain: 'chatwoot.help',
     slug: 'help-center',
   },
   {
     id: 2,
-    name: 'Chatwoot Handbook',
+    name: 'QualiChat Handbook',
     articles: 42,
     domain: 'chatwoot.help',
     slug: 'handbook',
@@ -20,7 +20,7 @@ const portals = [
     id: 3,
     name: 'Developer Documentation',
     articles: 89,
-    domain: 'dev.chatwoot.com',
+    domain: 'dev.qualichat.vercel.app',
     slug: 'docs',
   },
 ];

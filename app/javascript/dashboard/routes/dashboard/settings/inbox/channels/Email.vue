@@ -15,7 +15,7 @@ const getters = useStoreGetters();
 const { t } = useI18n();
 
 const globalConfig = getters['globalConfig/get'];
-const isAChatwootInstance = getters['globalConfig/isAChatwootInstance'];
+const isAQualiChatInstance = getters['globalConfig/isAQualiChatInstance'];
 
 const emailProviderList = computed(() => {
   return [
@@ -41,7 +41,7 @@ const emailProviderList = computed(() => {
       icon: 'i-woot-mail',
     },
   ].filter(providerConfig => {
-    if (isAChatwootInstance.value) {
+    if (isAQualiChatInstance.value) {
       return true;
     }
     return providerConfig.isEnabled;

@@ -60,7 +60,7 @@ export default {
       getAccount: 'accounts/getAccount',
       uiFlags: 'accounts/getUIFlags',
       isFeatureEnabledonAccount: 'accounts/isFeatureEnabledonAccount',
-      isOnChatwootCloud: 'globalConfig/isOnChatwootCloud',
+      isOnQualiChatCloud: 'globalConfig/isOnQualiChatCloud',
     }),
     showAudioTranscriptionConfig() {
       return this.isFeatureEnabledonAccount(
@@ -238,7 +238,7 @@ export default {
     </div>
     <AudioTranscription v-if="showAudioTranscriptionConfig" />
     <AccountId />
-    <div v-if="!uiFlags.isFetchingItem && isOnChatwootCloud">
+    <div v-if="!uiFlags.isFetchingItem && isOnQualiChatCloud">
       <AccountDelete />
     </div>
     <BuildInfo />
